@@ -334,6 +334,16 @@ function LaptopShowcase() {
   const [activeProject, setActiveProject] = useState(0);
   const [paused, setPaused] = useState(false);
 
+  const showPreviousProject = () => {
+    setActiveProject((current) =>
+      (current - 1 + projects.length) % projects.length,
+    );
+  };
+
+  const showNextProject = () => {
+    setActiveProject((current) => (current + 1) % projects.length);
+  };
+
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
@@ -395,24 +405,33 @@ function LaptopShowcase() {
                 <small>{project.tag}</small>
               </article>
             ))}
+            <div
+              className="screen-switcher"
+              role="group"
+              aria-label="Projekt im MacBook wechseln"
+            >
+              <button
+                type="button"
+                onClick={showPreviousProject}
+                aria-label="Vorheriges Projekt"
+              >
+                <span aria-hidden="true">&larr;</span>
+              </button>
+              <output aria-live="polite">
+                0{activeProject + 1} / 0{projects.length}
+              </output>
+              <button
+                type="button"
+                onClick={showNextProject}
+                aria-label="Naechstes Projekt"
+              >
+                <span aria-hidden="true">&rarr;</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="project-switcher" aria-label="Projekt auswählen">
-        {projects.map((project, index) => (
-          <button
-            key={project.slug}
-            type="button"
-            className={activeProject === index ? "is-active" : ""}
-            onClick={() => setActiveProject(index)}
-            aria-pressed={activeProject === index}
-          >
-            <span>0{index + 1}</span>
-            {project.studio}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
@@ -524,8 +543,8 @@ function InquirySection() {
             zu steigern?
           </h2>
           <p>
-            Buche ein kostenloses Erstgespräch um mir zu 
-            erzählen wie ich dir helfen kann.
+            Buche ein kostenloses Erstgespräch 
+            und erhalte ein unverbindliches Angebot.
           </p>
           <div className="contact-direct">
             <span>Lieber direkt?</span>
