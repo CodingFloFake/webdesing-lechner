@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { FormEvent, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import type { FormEvent, MouseEvent, ReactNode } from "react";
 
 const navigation = [
   { label: "Work", href: "#work" },
@@ -62,6 +63,44 @@ type ButtonLinkProps = {
   onClick?: () => void;
 };
 
+function useSectionNavigation(afterNavigation?: () => void) {
+  const router = useRouter();
+
+  return (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (
+      !href.startsWith("#") ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      afterNavigation?.();
+      return;
+    }
+
+    const section = document.getElementById(href.slice(1));
+    if (!section) {
+      afterNavigation?.();
+      return;
+    }
+
+    event.preventDefault();
+    afterNavigation?.();
+
+    if (window.location.hash !== href) {
+      router.push(href, { scroll: false });
+    }
+
+    section.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
+  };
+}
+
 function Arrow() {
   return (
     <span className="arrow" aria-hidden="true">
@@ -76,8 +115,14 @@ function ButtonLink({
   variant = "filled",
   onClick,
 }: ButtonLinkProps) {
+  const navigateToSection = useSectionNavigation(onClick);
+
   return (
-    <a className={`button button--${variant}`} href={href} onClick={onClick}>
+    <a
+      className={`button button--${variant}`}
+      href={href}
+      onClick={(event) => navigateToSection(event, href)}
+    >
       <span>{children}</span>
       <Arrow />
     </a>
@@ -158,11 +203,17 @@ function Header() {
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+  const navigateToSection = useSectionNavigation(closeMenu);
 
   return (
     <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
       <div className="header-inner">
-        <a className="wordmark" href="#top" aria-label="Lechner Webdesign – Startseite">
+        <a
+          className="wordmark"
+          href="#top"
+          aria-label="Lechner Webdesign – Startseite"
+          onClick={(event) => navigateToSection(event, "#top")}
+        >
           <span>LECHNER</span>
           <span>WEBDESIGN</span>
         </a>
@@ -173,7 +224,11 @@ function Header() {
           aria-label="Hauptnavigation"
         >
           {navigation.map((item) => (
-            <a key={item.href} href={item.href} onClick={closeMenu}>
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={(event) => navigateToSection(event, item.href)}
+            >
               {item.label}
             </a>
           ))}
