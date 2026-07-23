@@ -596,8 +596,13 @@ function InquirySection() {
 
       setSent(true);
       form.reset();
-    } catch {
-      setErrors({ message: "Beim Senden ist ein Fehler aufgetreten. Bitte versuche es erneut." });
+    } catch (error) {
+      setErrors({
+        message:
+          error instanceof Error
+            ? error.message
+            : "Beim Senden ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+      });
       setSent(false);
     } finally {
       setSubmitting(false);

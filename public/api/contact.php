@@ -52,7 +52,14 @@ $user = getenv('DB_USER');
 $password = getenv('DB_PASSWORD');
 
 if (!$host || !$database || !$user || $password === false) {
-    respond(500, ['message' => 'Die Datenbank ist derzeit nicht konfiguriert.']);
+    $missing = [];
+    if (!$host) $missing[] = 'DB_HOST';
+    if (!$database) $missing[] = 'DB_NAME';
+    if (!$user) $missing[] = 'DB_USER';
+    if ($password === false) $missing[] = 'DB_PASSWORD';
+    respond(500, [
+        'message' => 'Datenbank-Konfiguration fehlt: ' . implode(', ', $missing) . '.',
+    ]);
 }
 
 try {
@@ -94,7 +101,10 @@ try {
     ]);
 } catch (Throwable $error) {
     error_log('Contact form database error: ' . $error->getMessage());
-    respond(500, ['message' => 'Die Anfrage konnte nicht gespeichert werden.']);
+    $errorCode = $error instanceof PDOException ? (string) $error->getCode() : 'unknown';
+    respond(500, [
+        'message' => 'Datenbankverbindung fehlgeschlagen (Fehlercode ' . $errorCode . ').',
+    ]);
 }
 
 respond(201, ['message' => 'Anfrage erfolgreich gespeichert.']);
