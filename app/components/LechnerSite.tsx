@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import type { FormEvent, MouseEvent, ReactNode } from "react";
 
 const navigation = [
-  { label: "Work", href: "#work" },
-  { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Work", href: "#work" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -747,18 +747,29 @@ function InquirySection() {
 
 function Footer() {
   const year = new Date().getFullYear();
+  const navigateToSection = useSectionNavigation();
 
   return (
     <footer className="site-footer">
       <div className="site-shell">
         <div className="footer-top">
-          <a className="wordmark wordmark--footer" href="#top">
+          <a
+            className="wordmark wordmark--footer"
+            href="#top"
+            onClick={(event) => navigateToSection(event, "#top")}
+          >
             <span>LECHNER</span>
             <span>WEBDESIGN</span>
           </a>
           <nav aria-label="Footer-Navigation">
             {navigation.map((item) => (
-              <a key={item.href} href={item.href}>{item.label}</a>
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => navigateToSection(event, item.href)}
+              >
+                {item.label}
+              </a>
             ))}
           </nav>
           <div className="footer-contact">
