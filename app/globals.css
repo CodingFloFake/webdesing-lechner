@@ -1470,6 +1470,10 @@ button:hover .arrow {
     padding-block: 1rem;
   }
 
+  body.menu-open .site-header.is-scrolled {
+    backdrop-filter: none;
+  }
+
   .menu-toggle {
     position: relative;
     z-index: 102;
@@ -1487,8 +1491,8 @@ button:hover .arrow {
     gap: 1.6rem;
     padding: 7rem var(--site-gutter) 3rem;
     background:
-      radial-gradient(circle at 90% 20%, rgba(92, 80, 112, 0.16), transparent 35%),
-      rgba(7, 7, 7, 0.98);
+      radial-gradient(circle at 90% 20%, rgba(151, 105, 62, 0.18), transparent 35%),
+      linear-gradient(110deg, #060606 0 53%, #080808 74%, #0a0908 100%);
     opacity: 0;
     pointer-events: none;
     transform: translateY(-1rem);
