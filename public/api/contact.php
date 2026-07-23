@@ -46,10 +46,28 @@ if (($_POST['privacy'] ?? '') !== 'on') {
     respond(422, ['message' => 'Bitte bestätige den Datenschutzhinweis.']);
 }
 
-$host = getenv('DB_HOST');
-$database = getenv('DB_NAME');
-$user = getenv('DB_USER');
-$password = getenv('DB_PASSWORD');
+$privateConfigPaths = [
+    dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'db-config.php',
+    dirname(__DIR__) . DIRECTORY_SEPARATOR . 'private-config' . DIRECTORY_SEPARATOR . 'db-config.php',
+];
+$privateConfig = [];
+
+foreach ($privateConfigPaths as $privateConfigPath) {
+    if (is_readable($privateConfigPath)) {
+        $loadedConfig = require $privateConfigPath;
+        if (is_array($loadedConfig)) {
+            $privateConfig = $loadedConfig;
+            break;
+        }
+    }
+}
+
+// A private config file outside public_html takes precedence. Environment
+// variables remain supported for hosts that expose them to the PHP runtime.
+$host = $privateConfig['host'] ?? getenv('DB_HOST');
+$database = $privateConfig['name'] ?? getenv('DB_NAME');
+$user = $privateConfig['user'] ?? getenv('DB_USER');
+$password = $privateConfig['password'] ?? getenv('DB_PASSWORD');
 
 if (!$host || !$database || !$user || $password === false) {
     $missing = [];
