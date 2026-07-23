@@ -530,6 +530,7 @@ type FormErrors = Partial<Record<FieldName, string>>;
 function InquirySection() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const clearError = (field: FieldName) => {
     setSent(false);
@@ -541,7 +542,7 @@ function InquirySection() {
     });
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -577,8 +578,30 @@ function InquirySection() {
     }
 
     setErrors({});
-    setSent(true);
-    form.reset();
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact.php", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
+      });
+      const result = (await response.json().catch(() => null)) as
+        | { message?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(result?.message || "Die Anfrage konnte nicht gesendet werden.");
+      }
+
+      setSent(true);
+      form.reset();
+    } catch {
+      setErrors({ message: "Beim Senden ist ein Fehler aufgetreten. Bitte versuche es erneut." });
+      setSent(false);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const fieldState = (field: FieldName) => ({
@@ -611,6 +634,14 @@ function InquirySection() {
 
         <Reveal delay={1} className="form-wrap">
           <form className="inquiry-form" noValidate onSubmit={handleSubmit}>
+            <input
+              className="form-honeypot"
+              name="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+            />
             <div className="form-grid">
               <div className="field">
                 <label htmlFor="name">Name *</label>
@@ -719,8 +750,8 @@ function InquirySection() {
             )}
 
             <div className="form-footer">
-              <button className="button button--filled" type="submit">
-                <span>Anfrage senden</span>
+              <button className="button button--filled" type="submit" disabled={submitting}>
+                <span>{submitting ? "Wird gesendet ..." : "Anfrage senden"}</span>
                 <Arrow />
               </button>
               <p>Antwort in der Regel innerhalb von 1–2 Werktagen.</p>
