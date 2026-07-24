@@ -670,12 +670,15 @@ button:hover .arrow {
 .showcase-stage {
   position: relative;
   display: flex;
+  width: 100vw;
   min-height: 40rem;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   margin-top: clamp(2rem, 3vw, 3rem);
+  margin-left: 50%;
   padding: clamp(1rem, 1.5vw, 1.5rem) 0 1.25rem;
+  transform: translateX(-50%);
 }
 
 
@@ -715,7 +718,7 @@ button:hover .arrow {
 
 .macbook {
   position: relative;
-  width: min(70rem, 92%);
+  width: 70vw;
 }
 
 .macbook-asset {
@@ -1137,16 +1140,28 @@ button:hover .arrow {
 }
 
 .inquiry-form {
-  padding: clamp(1.5rem, 3.5vw, 3rem);
+  padding: clamp(1.25rem, 2.5vw, 2rem);
   border: 1px solid var(--color-line);
   background: rgba(15, 15, 14, 0.64);
   box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(18px);
 }
 
+/* Anti-Spam-Feld: für Besucher und Screenreader ausgeblendet. */
+.form-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .form-grid {
   display: grid;
-  gap: 1.8rem 1.4rem;
+  gap: 1.2rem 1.2rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -1185,12 +1200,12 @@ button:hover .arrow {
 
 .field input,
 .field select {
-  height: 3.1rem;
+  height: 2.7rem;
 }
 
 .field textarea {
-  min-height: 8rem;
-  padding-block: 0.8rem;
+  min-height: 5.5rem;
+  padding-block: 0.6rem;
   resize: vertical;
 }
 
@@ -1233,7 +1248,7 @@ button:hover .arrow {
   display: grid;
   align-items: start;
   gap: 0.8rem;
-  margin-top: 1.8rem;
+  margin-top: 1.25rem;
   color: #88837c;
   cursor: pointer;
   font-size: 0.76rem;
@@ -1284,7 +1299,7 @@ button:hover .arrow {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  margin-top: 2.2rem;
+  margin-top: 1.5rem;
 }
 
 .form-footer p {
@@ -1419,6 +1434,16 @@ button:hover .arrow {
 .reveal--ready.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.laptop-reveal.reveal--ready {
+  transform: translateY(4.5rem) scale(0.9);
+  transform-origin: center bottom;
+  transition-duration: 1200ms;
+}
+
+.laptop-reveal.reveal--ready.is-visible {
+  transform: translateY(0) scale(1);
 }
 
 .reveal--delay-1 {
@@ -1591,9 +1616,12 @@ button:hover .arrow {
   }
 
   .showcase-stage {
+    width: auto;
     min-height: 0;
     margin-top: 1.5rem;
+    margin-left: 0;
     padding: 0;
+    transform: none;
   }
 
   .showcase-stage::before {

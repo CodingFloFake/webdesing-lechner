@@ -33,17 +33,14 @@ if (mb_strlen($name) < 2 || mb_strlen($name) > 120) {
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 190) {
     respond(422, ['message' => 'Bitte gib eine gültige E-Mail-Adresse ein.']);
 }
-if ($project === '' || mb_strlen($project) > 120) {
+if (mb_strlen($project) > 120) {
     respond(422, ['message' => 'Bitte wähle eine Projektart aus.']);
 }
-if ($budget === '' || mb_strlen($budget) > 120) {
+if (mb_strlen($budget) > 120) {
     respond(422, ['message' => 'Bitte wähle einen Budgetrahmen aus.']);
 }
-if (mb_strlen($message) < 20 || mb_strlen($message) > 10000) {
+if (mb_strlen($message) > 10000) {
     respond(422, ['message' => 'Die Nachricht muss zwischen 20 und 10.000 Zeichen enthalten.']);
-}
-if (($_POST['privacy'] ?? '') !== 'on') {
-    respond(422, ['message' => 'Bitte bestätige den Datenschutzhinweis.']);
 }
 
 $privateConfigPaths = [

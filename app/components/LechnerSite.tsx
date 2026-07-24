@@ -509,7 +509,7 @@ function ShowcaseSection() {
             </p>
           </div>
         </Reveal>
-        <Reveal delay={1}>
+        <Reveal delay={1} className="laptop-reveal">
           <LaptopShowcase />
         </Reveal>
       </div>
@@ -549,21 +549,10 @@ function InquirySection() {
     const nextErrors: FormErrors = {};
     const name = String(data.get("name") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
-    const project = String(data.get("project") ?? "");
-    const budget = String(data.get("budget") ?? "");
-    const message = String(data.get("message") ?? "").trim();
 
     if (name.length < 2) nextErrors.name = "Bitte gib deinen Namen ein.";
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       nextErrors.email = "Bitte gib eine gültige E-Mail-Adresse ein.";
-    }
-    if (!project) nextErrors.project = "Bitte wähle eine Projektart aus.";
-    if (!budget) nextErrors.budget = "Bitte wähle einen Budgetrahmen aus.";
-    if (message.length < 20) {
-      nextErrors.message = "Erzähl uns bitte in mindestens 20 Zeichen von deinem Projekt.";
-    }
-    if (data.get("privacy") !== "on") {
-      nextErrors.privacy = "Bitte bestätige den Datenschutzhinweis.";
     }
 
     if (Object.keys(nextErrors).length > 0) {
@@ -686,7 +675,7 @@ function InquirySection() {
                 />
               </div>
               <div className="field">
-                <label htmlFor="project">Art des Projekts *</label>
+                <label htmlFor="project">Art des Projekts</label>
                 <select
                   id="project"
                   name="project"
@@ -704,7 +693,7 @@ function InquirySection() {
                 {errors.project && <span id="project-error">{errors.project}</span>}
               </div>
               <div className="field field--full">
-                <label htmlFor="budget">Budget *</label>
+                <label htmlFor="budget">Budget</label>
                 <select
                   id="budget"
                   name="budget"
@@ -713,6 +702,7 @@ function InquirySection() {
                   {...fieldState("budget")}
                 >
                   <option value="" disabled>Budgetrahmen auswählen</option>
+                  <option value="1-3">€ 1.000 – 3.000</option>
                   <option value="3-5">€ 3.000 – 5.000</option>
                   <option value="5-10">€ 5.000 – 10.000</option>
                   <option value="10-20">€ 10.000 – 20.000</option>
@@ -722,11 +712,11 @@ function InquirySection() {
                 {errors.budget && <span id="budget-error">{errors.budget}</span>}
               </div>
               <div className="field field--full">
-                <label htmlFor="message">Nachricht *</label>
+                <label htmlFor="message">Nachricht</label>
                 <textarea
                   id="message"
                   name="message"
-                  rows={5}
+                  rows={3}
                   placeholder="Worum geht es und was soll die neue Website erreichen?"
                   onChange={() => clearError("message")}
                   {...fieldState("message")}
@@ -745,7 +735,7 @@ function InquirySection() {
               <i aria-hidden="true" />
               <span>
                 Ich stimme zu, dass meine Angaben zur Bearbeitung der Anfrage
-                verwendet werden. *
+                verwendet werden.
               </span>
             </label>
             {errors.privacy && (
